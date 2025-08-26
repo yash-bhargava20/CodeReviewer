@@ -3,6 +3,7 @@ import Editor from "@monaco-editor/react";
 import { PuffLoader } from "react-spinners";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { axiosInstance } from "../lib/axios";
 
 const Home = () => {
   const [code, setCode] = useState("// Write your code here...");
@@ -12,15 +13,14 @@ const Home = () => {
 
   const handleRun = async () => {
     setLoading(true);
+
     try {
-      const res = await fetch("http://localhost:5000/api/ai/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: code, language: language }),
+      const res = await axiosInstance.post("/api/ai/review", {
+        code,
+        language,
       });
 
-      const data = await res.json();
-      setResponse(data.review || data.response);
+      setResponse(res.data.review || res.data.response);
     } catch (err) {
       console.error(err);
       setResponse(" Error fetching review");
@@ -30,13 +30,13 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex h-screen bg-gray-100">
-        <div className="w-1/2 border-r border-gray-300">
-          <div className="flex justify-between items-center p-2 bg-gray-200">
+      <div className="flex h-screen bg-base-200">
+        <div className="w-1/2 border-r border-stone-500">
+          <div className="flex justify-between items-center p-2 bg-base-200">
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="border rounded p-1"
+              className="border rounded p-1 "
             >
               <option value="javascript">JavaScript</option>
               <option value="python">Python</option>
@@ -45,7 +45,7 @@ const Home = () => {
             </select>
             <button
               onClick={handleRun}
-              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+              className="bg-primary hover:bg-primary/70 text-white px-3 py-1 rounded"
             >
               {loading ? "Analyzing..." : "Review Code"}
             </button>
@@ -62,11 +62,13 @@ const Home = () => {
 
         <div className="w-1/2 p-4 flex flex-col">
           <h2 className="text-xl font-bold mb-2">AI Review</h2>
-          <div className="bg-white p-4 rounded-xl shadow flex-1 overflow-y-auto ">
+          <div className="bg-base-100 border-1 border-stone-400 p-4 rounded-md shadow flex-1 overflow-y-auto ">
             {loading ? (
-              <div className="flex flex-col items-center gap-2 ">
-                <PuffLoader size={24} color="#101010" />
-                <span>Analyzing your code</span>
+              <div className="flex h-full items-center justify-center">
+                <div className="flex flex-col items-center gap-2 ">
+                  <PuffLoader size={30} color="#94a3b8" />
+                  <span className="text-base-content">Analyzing your code</span>
+                </div>
               </div>
             ) : response ? (
               <ReactMarkdown
