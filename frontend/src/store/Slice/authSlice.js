@@ -39,10 +39,28 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+export const googleLogin = createAsyncThunk(
+  "auth/googleLogin",
+  async (token, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get("/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return { ...res.data, token };
+    } catch (error) {
+      console.log("Error in Google login:", error);
+      return rejectWithValue(
+        error.response?.data || "Failed to Login with Google"
+      );
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    authUser: null,
+    authUser: JSON.parse(localStorage.getItem("authUser")) || null,
     isLoggingIn: false,
     isSigningUp: false,
     isLoggingOut: false,
@@ -58,6 +76,7 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isSigningUp = false;
         state.authUser = action.payload;
+        localStorage.setItem("authUser", JSON.stringify(action.payload));
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.authUser = null;
@@ -71,6 +90,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.authUser = action.payload;
         state.isLoggingIn = false;
+        localStorage.setItem("authUser", JSON.stringify(action.payload));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.authUser = null;
@@ -83,9 +103,25 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.authUser = null;
         state.isLoggingOut = false;
+        localStorage.removeItem("authUser");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.isLoggingOut = false;
+        state.error = action.payload;
+      });
+    builder
+      .addCase(googleLogin.pending, (state) => {
+        state.isLoggingIn = true;
+        state.error = null;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.authUser = action.payload;
+        state.isLoggingIn = false;
+        localStorage.setItem("authUser", JSON.stringify(action.payload));
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
+        state.authUser = null;
+        state.isLoggingIn = false;
         state.error = action.payload;
       });
   },

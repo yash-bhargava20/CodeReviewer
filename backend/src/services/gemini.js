@@ -30,7 +30,7 @@ const fetch = require("node-fetch");
 async function generateContent(codeSnippet, language) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
   const prompt = `
-  You are an expert code reviewer. Analyze the following code and provide a structured review.
+  You are an expert code reviewer. Analyze the following code and provide a structured review (with emojis).
   
   Requirements:
   1. Identify syntax errors and logical bugs.
@@ -38,6 +38,7 @@ async function generateContent(codeSnippet, language) {
   3. Suggest performance improvements.
   4. Recommend best practices and clean code improvements.
   5. Provide the review in a clear, structured format (use bullet points).
+  6. If the code is empty or trivial, provide only a brief response without deep analysis.(write something which shows you are willing to help someone)
   
   Here is the code to review:
   \`\`\`${language}

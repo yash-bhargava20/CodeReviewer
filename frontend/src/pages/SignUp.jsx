@@ -29,6 +29,10 @@ const SignUp = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.open("http://localhost:5000/api/google", "_self");
+  };
+
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -134,12 +138,15 @@ const SignUp = () => {
               </button>
 
               <div className="flex items-center gap-2 text-base-content/60 text-sm">
-                <span className="h-px flex-1 bg-base-300"></span>
+                <span className="h-px flex-1 bg-gray-300"></span>
                 <span>Or sign up with</span>
-                <span className="h-px flex-1 bg-base-300"></span>
+                <span className="h-px flex-1 bg-gray-300"></span>
               </div>
 
-              <button className="btn btn-outline w-full rounded-2xl flex items-center gap-2">
+              <button
+                className="btn btn-outline w-full rounded-2xl flex items-center gap-2"
+                onClick={handleGoogleLogin}
+              >
                 <img
                   src="https://img.icons8.com/color/16/000000/google-logo.png"
                   alt="google"

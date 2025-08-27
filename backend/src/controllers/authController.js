@@ -67,3 +67,12 @@ exports.logout = async (req, res) => {
     return res.status(500).json({ message: "Failed to log out" });
   }
 };
+
+exports.getMe = async (req, res) => {
+  try {
+    const user = req.user;
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};

@@ -4,13 +4,16 @@ import Home from "./components/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import { useSelector } from "react-redux";
+import NavBar from "./components/NavBar";
+import GoogleCallback from "./components/GoogleCallback";
 
 const App = () => {
   const { authUser } = useSelector((state) => state.auth);
 
   return (
     <>
-      <div data-theme="light" className="bg-base-300 min-h-screen w-full ">
+      {authUser && <NavBar />}
+      <div className="bg-base-300 min-h-screen w-full ">
         <Routes>
           <Route
             path="/"
@@ -18,6 +21,7 @@ const App = () => {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/google/callback" element={<GoogleCallback />} />
         </Routes>
       </div>
     </>
